@@ -2,13 +2,15 @@
 //уходит в бесконечный цикд
 
 
-#include <iostream>
-#include <string>
-#include <fstream>
-#include "limits"
-#pragma GCC optimize("O3")//проверить
-using namespace std;
+#include "iostream"
+#include "string"
+#include "fstream"
 
+
+
+
+//#define DEBUG
+using namespace std;
 struct knig{
     string name,author;
     int mark=0;
@@ -20,17 +22,26 @@ struct knig{
         mark=a4;
     }
 };
+void writefl(string n,string a,int d,int m) {
+    ofstream out("books.txt",ios::app);
+    if (out.is_open())
+    {
+        out << n<<" "<<a<<" "<<d<<" "<<m<<"\n";
+    }
+    out.close();
+}
 void func(int key){
+    knig bobrik("","",0,0);
     switch (key) {
         case 1:
-            knig bobrik("","",0,0);
+
             metk1:
             cout<<"Название (до 100 символов)\n";
 
             cin>>bobrik.name;
 
             if ((bobrik.name).length()>=100){
-                cout<<"Неверный формат\n";
+                cout<<"Неверный формат"<<endl;
                 goto metk1;
             }
             metk2:
@@ -39,40 +50,68 @@ void func(int key){
             cin>>bobrik.author;
 
             if ((bobrik.author).length()>=50){
-                cout<<"Неверный формат\n";
+                cout<<"Неверный формат"<<endl;
                 goto metk2;
             }
+
+
             metk3:
-            cout<<"Год прочтения\n";
-            int k;
-
-            cin>>bobrik.date;
-
+            cout<<"Год прочтения"<<endl;
+            string s;
+            cin>>s;
+            try{
+                bobrik.date= stoi(s);
+            } catch (const std::invalid_argument& e) {
+                cout<<"Неверный формат"<<endl;
+                goto metk3;
+            }
             if (bobrik.date>=2026 || bobrik.date<=0){
-                cout<<"Неверный формат\n";
-
+                cout<<"Неверный формат"<<endl;
                 goto metk3;
             }
             metk4:
             cout<<"Оценка по 10 бальной шкале\n";
+            string s1;
+            cin>>s1;
+            try{
+               bobrik.mark= stoi(s1);
 
-            cin>>bobrik.mark;
+            } catch (const std::invalid_argument& e) {
+                cout<<"Неверный формат"<<endl;
+                goto metk4;
+            }
 
             if (bobrik.mark>10 || bobrik.mark<0){
-                cout<<"Неверный формат\n";goto metk4;
+                cout<<"Неверный формат"<<endl;
+                goto metk4;
             }
+#ifdef DEBUG
             cout<<bobrik.name<<"\n"<<bobrik.author<<"\n"<<bobrik.date<<"\n"<<bobrik.mark;
+#endif
             break;
     }
+
+    writefl(bobrik.name,bobrik.author,bobrik.date,bobrik.mark);
 }
 void start(){
     int a=0;
+
     while (a!=4) {
+        metk5:
         cout << "Для добавления книги нажмите 1\n";
         cout << "Для показа списка книг нажмите 2\n";
         cout << "Для просмотра статистики нажмите 3\n";
         cout << "Для выхода нажмите 4\n";
-        cin >> a;
+        string s2;
+        cin >> s2;
+
+        try{
+            a= stoi(s2);
+
+        } catch (const std::invalid_argument& e) {
+            cout<<"Неверный формат"<<endl;
+            goto metk5;
+        }
         func(a);
         cout<<"\n";
     }
