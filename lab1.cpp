@@ -7,12 +7,13 @@
 #include "fstream"
 #include "vector"
 #include "sstream"
+#include "algorithm"
 
 
 //#define DEBUG
 using namespace std;
 
-vector<pair<string, int>> nameknmark;
+vector<pair<int, string>> nameknmark;
 
 
 struct knig {
@@ -45,13 +46,38 @@ void readf(string namef) {
         while (getline(in, line)) {
             stringstream ss(line);
             ss>>n>>a>>d>>m;
-            nameknmark.push_back({n,m});
+            nameknmark.push_back({m,n});
             cout << n<<" "<<m << endl;
         }
     }
+    in.close();
 }
+bool compare(pair<int,string> a,pair<int,string> b){
+    return a.first>b.first;
+}
+void getstat(){
+    readf("books.txt");
+    cout<<"Количество прочитанных книг: "<<nameknmark.size()<<endl;
+    sort(nameknmark.begin(), nameknmark.end(),compare);
+    float k=0;
+    int ch=0;
+    for (auto x: nameknmark){
+        string n;
+        k+=x.first;
+        ch+=1;
+    }
+    cout<<"Средняя оценка: "<<k/static_cast<float>(ch)<<endl;
+    int sch=0;
+    cout<<"Топ произведений: "<<endl;
+    do {
 
+        cout<<nameknmark[sch].second<<" "<<nameknmark[sch].first<<endl;
+        sch++;
+    }while(nameknmark[sch].first==nameknmark[sch-1].first && sch<ch);
+
+}
 void func(int key) {
+    nameknmark.resize(0);
     knig bobrik("", "", 0, 0);
     switch (key) {
         case 1: {
@@ -114,6 +140,10 @@ void func(int key) {
         }
         case 2: {
             readf("books.txt");
+            break;
+        }
+        case 3:{
+            getstat();
             break;
         }
     }
