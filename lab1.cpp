@@ -8,15 +8,16 @@
 #include "vector"
 #include "sstream"
 #include "algorithm"
+#include "cstdlib"
 
 
 //#define DEBUG
 using namespace std;
 
-vector<pair<int, string>> nameknmark;
+vector<pair<int, string>> nameknmark;//массив с парами типа (оценка книги; название книги)
 
 
-struct knig {
+struct knig {//структура отвечающая за класс книг которая принимает на вход имя книги, автора, дату написания, оценку
     string name, author;
     int mark = 0;
     int date = 0;
@@ -29,6 +30,10 @@ struct knig {
     }
 };
 
+
+
+//структура отвечающая за запись параметров структуры knig в файл
+
 void writefl(string n, string a, int d, int m) {
     ofstream out("books.txt", ios::app);
     if (out.is_open()) {
@@ -37,45 +42,75 @@ void writefl(string n, string a, int d, int m) {
     out.close();
 }
 
-void readf(string namef) {
+void cl(){
+    cin.ignore();
+    cin.get();
+    system("clear");
+}
+
+
+//чтение праарметров каждой из книги в файл
+
+void readf(string namef, int k) {
     string line;
-    string n,a;
-    int m,d;
+    string n, a;
+    int m, d;
     ifstream in(namef);
     if (in.is_open()) {
         while (getline(in, line)) {
             stringstream ss(line);
-            ss>>n>>a>>d>>m;
-            nameknmark.push_back({m,n});
-            cout << n<<" "<<m << endl;
+            ss >> n >> a >> d >> m;
+            if (k == 1) {
+                cout << n << " " << m << endl;
+            }
+            nameknmark.push_back({m, n});
+
         }
+    }
+    if (k==1){
+        cout<<endl;
+        cout<<"Нажмите Enter для продолжения";
+        cl();
     }
     in.close();
 }
-bool compare(pair<int,string> a,pair<int,string> b){
-    return a.first>b.first;
+
+
+//функция сравнения для sort
+bool compare(pair<int, string> a, pair<int, string> b) {
+    return a.first > b.first;
 }
-void getstat(){
-    readf("books.txt");
-    cout<<"Количество прочитанных книг: "<<nameknmark.size()<<endl;
-    sort(nameknmark.begin(), nameknmark.end(),compare);
-    float k=0;
-    int ch=0;
-    for (auto x: nameknmark){
+
+
+//получение статистики из книг
+
+void getstat() {
+    readf("books.txt",0);
+    cout << "Количество прочитанных книг: " << nameknmark.size() << endl;
+    sort(nameknmark.begin(), nameknmark.end(), compare);
+    float k = 0;
+    int ch = 0;
+    for (auto x: nameknmark) {
         string n;
-        k+=x.first;
-        ch+=1;
+        k += x.first;
+        ch += 1;
     }
-    cout<<"Средняя оценка: "<<k/static_cast<float>(ch)<<endl;
-    int sch=0;
-    cout<<"Топ произведений: "<<endl;
+    cout << "Средняя оценка: " << k / static_cast<float>(ch) << endl;
+    int sch = 0;
+    cout << "Топ произведений: " << endl;
     do {
 
-        cout<<nameknmark[sch].second<<" "<<nameknmark[sch].first<<endl;
+        cout << nameknmark[sch].second << " " << nameknmark[sch].first << endl;
         sch++;
-    }while(nameknmark[sch].first==nameknmark[sch-1].first && sch<ch);
-
+    } while (nameknmark[sch].first == nameknmark[sch - 1].first && sch < ch);
+    cout<<endl;
+    cout<<"Нажмите Enter для продолжения";
+    cl();
 }
+
+
+//обработка ввод с клавиатуры для проги
+
 void func(int key) {
     nameknmark.resize(0);
     knig bobrik("", "", 0, 0);
@@ -88,7 +123,9 @@ void func(int key) {
             cin >> bobrik.name;
 
             if ((bobrik.name).length() >= 100) {
+                system("clear");
                 cout << "Неверный формат" << endl;
+                cl();
                 goto metk1;
             }
             metk2:
@@ -97,7 +134,9 @@ void func(int key) {
             cin >> bobrik.author;
 
             if ((bobrik.author).length() >= 50) {
+                system("clear");
                 cout << "Неверный формат" << endl;
+                cl();
                 goto metk2;
             }
 
@@ -109,11 +148,15 @@ void func(int key) {
             try {
                 bobrik.date = stoi(s);
             } catch (const std::invalid_argument &e) {
+                system("clear");
                 cout << "Неверный формат" << endl;
+                cl();
                 goto metk3;
             }
             if (bobrik.date >= 2026 || bobrik.date <= 0) {
+                system("clear");
                 cout << "Неверный формат" << endl;
+                cl();
                 goto metk3;
             }
             metk4:
@@ -124,12 +167,17 @@ void func(int key) {
                 bobrik.mark = stoi(s1);
 
             } catch (const std::invalid_argument &e) {
+                system("clear");
                 cout << "Неверный формат" << endl;
+                cl();
                 goto metk4;
             }
 
             if (bobrik.mark > 10 || bobrik.mark < 0) {
+                system("clear");
                 cout << "Неверный формат" << endl;
+                cl();
+
                 goto metk4;
             }
 #ifdef DEBUG
@@ -139,10 +187,10 @@ void func(int key) {
             break;
         }
         case 2: {
-            readf("books.txt");
+            readf("books.txt",1);
             break;
         }
-        case 3:{
+        case 3: {
             getstat();
             break;
         }
@@ -153,21 +201,25 @@ void func(int key) {
 
 void start() {
     int a = 0;
-
+    system("clear");
     while (a != 4) {
         metk5:
+        cout << "=============########===============" << endl;
         cout << "Для добавления книги нажмите 1\n";
         cout << "Для показа списка книг нажмите 2\n";
         cout << "Для просмотра статистики нажмите 3\n";
         cout << "Для выхода нажмите 4\n";
         string s2;
         cin >> s2;
-
+        system("clear");
         try {
             a = stoi(s2);
 
         } catch (const std::invalid_argument &e) {
             cout << "Неверный формат" << endl;
+            goto metk5;
+        }
+        if (!(a > 0 && a < 5)) {
             goto metk5;
         }
         func(a);
@@ -176,5 +228,6 @@ void start() {
 }
 
 int main() {
+    cout<<endl;
     start();
 }
