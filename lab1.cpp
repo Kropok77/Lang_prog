@@ -9,7 +9,7 @@
 #include "sstream"
 #include "algorithm"
 #include "cstdlib"
-
+#include "limits"
 
 //#define DEBUG
 using namespace std;
@@ -32,6 +32,19 @@ struct knig {//структура отвечающая за класс книг 
 
 
 
+string rep(string h,char from,char to){
+    string ot="";
+    for (auto x: h){
+        if (x==from){
+            ot.push_back(to);
+
+        }else{
+            ot.push_back(x);
+        }
+    }
+    return ot;
+}
+
 //структура отвечающая за запись параметров структуры knig в файл
 
 void writefl(string n, string a, int d, int m) {
@@ -51,21 +64,29 @@ void cl(){
 
 //чтение праарметров каждой из книги в файл
 
-void readf(string namef, int k) {
+int readf(string namef, int k) {
     string line;
     string n, a;
     int m, d;
     ifstream in(namef);
+
     if (in.is_open()) {
+        cout<< "Название Автор Дата прочтения оценка"<<endl;
+        cout<< "===================================="<<endl;
         while (getline(in, line)) {
             stringstream ss(line);
             ss >> n >> a >> d >> m;
             if (k == 1) {
-                cout << n << " " << m << endl;
+                cout << rep(n,'_',' ') <<" "<<rep(a,'_',' ')<< " " <<d<<" "<< m << endl;
             }
-            nameknmark.push_back({m, n});
+            nameknmark.push_back({m, rep(n,'_',' ')});
 
         }
+    }else{
+        cout<<"Добавьте книги!"<<endl<<endl;
+        cout<<"Нажмите Enter для продолжения"<<endl;
+        cl();
+        return 1;
     }
     if (k==1){
         cout<<endl;
@@ -73,6 +94,7 @@ void readf(string namef, int k) {
         cl();
     }
     in.close();
+    return 0;
 }
 
 
@@ -85,7 +107,10 @@ bool compare(pair<int, string> a, pair<int, string> b) {
 //получение статистики из книг
 
 void getstat() {
-    readf("books.txt",0);
+    int j=readf("books.txt",0);
+    if (j==1){
+        return;
+    }
     cout << "Количество прочитанных книг: " << nameknmark.size() << endl;
     sort(nameknmark.begin(), nameknmark.end(), compare);
     float k = 0;
@@ -119,9 +144,9 @@ void func(int key) {
 
             metk1:
             cout << "Название (до 100 символов)\n";
-
-            cin >> bobrik.name;
-
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            getline(cin,bobrik.name);
+            bobrik.name=rep(bobrik.name,' ','_');
             if ((bobrik.name).length() >= 100) {
                 system("clear");
                 cout << "Неверный формат" << endl;
@@ -130,8 +155,8 @@ void func(int key) {
             }
             metk2:
             cout << "Автор (до 50 символов)\n";
-
-            cin >> bobrik.author;
+            getline(cin,bobrik.author);
+            bobrik.author=rep(bobrik.author,' ','_');
 
             if ((bobrik.author).length() >= 50) {
                 system("clear");
