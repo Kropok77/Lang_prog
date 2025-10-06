@@ -71,13 +71,16 @@ int readf(string namef, int k) {
     ifstream in(namef);
 
     if (in.is_open()) {
-        cout<< "Название Автор Дата прочтения оценка"<<endl;
-        cout<< "===================================="<<endl;
+        if (k==1){
+            cout<< "Название Автор Дата прочтения оценка"<<endl;
+            cout<< "===================================="<<endl;
+        }
+
         while (getline(in, line)) {
             stringstream ss(line);
             ss >> n >> a >> d >> m;
             if (k == 1) {
-                cout << rep(n,'_',' ') <<" "<<rep(a,'_',' ')<< " " <<d<<" "<< m << endl;
+                cout << rep(n,'_',' ') <<"  "<<rep(a,'_',' ')<< "   " <<d<<"    "<< m << endl;
             }
             nameknmark.push_back({m, rep(n,'_',' ')});
 
